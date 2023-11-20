@@ -1,25 +1,21 @@
 package com.azri.library.config;
 
 
-import com.azri.library.service.UserService;
+import com.azri.library.security.Role;
+import com.azri.library.security.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
-import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
-import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import static com.azri.library.security.Permission.ADMIN_READ;
+import static com.azri.library.security.Permission.USER_READ;
+import static org.springframework.http.HttpMethod.GET;
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
 
@@ -29,14 +25,17 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
 //@EnableMethodSecurity
 public class SecurityConfig {
     private static final String[] WHITE_LIST_URL = { //TODO FILl
-            "/auth/rergister"
+            "/api/v1/auth/**",
+//            "/auth/signin/**",
+//            "/auth/test1*",
+//            "/auth/test1/**"
 //            "/h2-ui/**",
 //            String.valueOf(PathRequest.toH2Console())
 };
 
 
     private final JwtAuthenticationFilter jwtAuthFilter;
-    private final UserService userService;
+    private final AuthenticationProvider authenticationProvider;
 
 
     @Bean
@@ -44,31 +43,16 @@ public class SecurityConfig {
         return http.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(req ->
                         req.requestMatchers(WHITE_LIST_URL).permitAll()
-//                                .requestMatchers("/index").hasAnyAuthority() //TODO api v1 ......
+                                .requestMatchers("/api/v1/book/**").hasAnyRole(Role.ADMIN.name(),Role.USER.name())
+                                .requestMatchers(GET,"/api/v1/book/**").hasAnyAuthority(ADMIN_READ.name(),USER_READ.name())
                                 .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(STATELESS))
-                .authenticationProvider(authenticationProvider()).addFilterBefore(
+                .authenticationProvider(authenticationProvider)
+                .addFilterBefore(
                         jwtAuthFilter, UsernamePasswordAuthenticationFilter.class
                 )
                 .build();
     }
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
 
-    @Bean
-    public AuthenticationProvider authenticationProvider(){
-        DaoAuthenticationProvider authenticationProvider=new DaoAuthenticationProvider();
-        authenticationProvider.setUserDetailsService(userService.userDetailsService());
-        authenticationProvider.setPasswordEncoder(passwordEncoder());
-        return authenticationProvider;
-    }
-
-
-    @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
-        return config.getAuthenticationManager();
-    }
 }

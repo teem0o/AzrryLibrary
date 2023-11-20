@@ -1,41 +1,22 @@
 package com.azri.library.controller;
 
-import com.azri.library.repository.BookRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/book")
+@RequestMapping("/api/v1/book")
 @RequiredArgsConstructor
 public class BookController {
-    private BookRepository bookRepository;
 
-    @Autowired
-    public BookController(BookRepository bookRepository) {
-        this.bookRepository = bookRepository;
+    @GetMapping
+    public ResponseEntity<String> test() {
+        return ResponseEntity.ok("test");
     }
-
-    public ResponseEntity<?> getAllBooks() {
-        return null;
+    @GetMapping("/test2")
+    public String test2() {
+        return "test";
     }
-
-    public ResponseEntity<?> getBookById(Long id) {
-        return null;
-    }
-
-    public ResponseEntity<?> createBook() {
-        return null;
-    }
-
-    public ResponseEntity<?> updateBook(Long id) {
-        return null;
-    }
-
-    public ResponseEntity<?> deleteBook(Long id) {
-        return null;
-    }
-
 }

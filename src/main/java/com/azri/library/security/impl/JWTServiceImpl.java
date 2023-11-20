@@ -1,6 +1,6 @@
-package com.azri.library.service.impl;
+package com.azri.library.security.impl;
 
-import com.azri.library.service.JWTService;
+import com.azri.library.security.JWTService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -11,17 +11,27 @@ import org.springframework.stereotype.Service;
 
 import java.security.Key;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Function;
 
 @Service
 public class JWTServiceImpl implements JWTService {
+    private static final String SECRET_KEY = "5367566B59703373367639792F423F4528482B4D6251655468576D5A71347437";
 
-    public String generateToken(UserDetails userDetails) {
-        return Jwts.builder().setSubject(userDetails.getUsername()).setIssuedAt(new java.util.Date())
+    public String generateToken(UserDetails userDetails){
+        return generateToken(new HashMap<>(),userDetails);
+    }
+    public String generateToken(Map<String,Object> extraClaims, UserDetails userDetails) {
+        return Jwts.builder()
+                .setClaims(extraClaims)
+                .setSubject(userDetails.getUsername())
+                .setIssuedAt(new java.util.Date(System.currentTimeMillis()))
                 .setExpiration(new java.util.Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10))
                 .signWith(getSignKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
+
     public String extractUsername(String token) {
         return extractClaim(token,Claims::getSubject);
     }
@@ -32,7 +42,7 @@ public class JWTServiceImpl implements JWTService {
     }
 
     private Key getSignKey() {
-        byte[] key = Decoders.BASE64.decode("56709");
+        byte[] key = Decoders.BASE64.decode(SECRET_KEY);
         return Keys.hmacShaKeyFor(key);
     }
     private Claims extractAllClaims(String token) {
@@ -45,6 +55,9 @@ public class JWTServiceImpl implements JWTService {
     }
 
     private boolean isTokenExpired(String token) {
-        return extractClaim(token,Claims::getExpiration).before(new Date());
+        return extractExpiration(token).before(new Date());
+    }
+    private Date extractExpiration(String token){
+        return extractClaim(token,Claims::getExpiration);
     }
 }

@@ -1,29 +1,31 @@
 package com.azri.library.controller;
 
-import com.azri.library.dto.SignUpRequest;
-import com.azri.library.entity.User;
+import com.azri.library.dto.AuthenticateRequest;
+import com.azri.library.dto.RegisterRequest;
+import com.azri.library.security.AuthenticationResponse;
 import com.azri.library.service.AuthenticationService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("/api/v1/auth")
 @RequiredArgsConstructor
 public class AuthenticationController {
     private final AuthenticationService authenticationService;
 
-    @PostMapping("/signup")
-    public ResponseEntity<User> signup(@RequestBody SignUpRequest signUpRequest) {
-        return ResponseEntity.ok(authenticationService.signup(signUpRequest));
+    @PostMapping("/register")
+    public ResponseEntity<?> signup(@Valid @RequestBody RegisterRequest registerRequest) {
+            return ResponseEntity.ok(authenticationService.signup(registerRequest));
+
     }
-    @GetMapping("/test")
-    public String test() {
-        return "test";
-    }
-    @GetMapping("/test2")
-    public String test2() {
-        return "test";
+    @PostMapping("/authenticate")
+    public ResponseEntity<AuthenticationResponse> signin(@Valid @RequestBody AuthenticateRequest authenticateRequest) {
+        return ResponseEntity.ok(authenticationService.signin(authenticateRequest));
     }
 
 
