@@ -14,7 +14,6 @@ public enum Permission {
     USER_UPDATE("user:update"),
     USER_CREATE("user:create"),
     USER_DELETE("user:delete")
-
     ;
 
     @Getter

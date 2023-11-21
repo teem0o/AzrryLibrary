@@ -3,17 +3,21 @@ package com.azri.library.entity;
 import com.azri.library.security.Role;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
+import java.util.List;
 
 @Entity
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "`user`")
+@Table(name = "\"user\"")
+@SQLDelete(sql = "UPDATE \"user\" SET deleted = 'true' WHERE id = ?")
 public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
@@ -21,6 +25,9 @@ public class User implements UserDetails {
     private String username;
     private String password;
     private Role role;
+    private boolean deleted = false;
+    @OneToMany(mappedBy = "user")
+    private List<Book> books;
 
 
     @Override

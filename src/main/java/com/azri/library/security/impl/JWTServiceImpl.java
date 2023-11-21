@@ -6,6 +6,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -17,7 +18,10 @@ import java.util.function.Function;
 
 @Service
 public class JWTServiceImpl implements JWTService {
-    private static final String SECRET_KEY = "5367566B59703373367639792F423F4528482B4D6251655468576D5A71347437";
+    @Value("${application.security.jwt.secret-key}")
+    private String SECRET_KEY;
+    @Value("${application.security.jwt.expiration}")
+    private long JWT_EXPIRATION;
 
     public String generateToken(UserDetails userDetails){
         return generateToken(new HashMap<>(),userDetails);
@@ -27,7 +31,7 @@ public class JWTServiceImpl implements JWTService {
                 .setClaims(extraClaims)
                 .setSubject(userDetails.getUsername())
                 .setIssuedAt(new java.util.Date(System.currentTimeMillis()))
-                .setExpiration(new java.util.Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10))
+                .setExpiration(new java.util.Date(System.currentTimeMillis() + JWT_EXPIRATION))
                 .signWith(getSignKey(), SignatureAlgorithm.HS256)
                 .compact();
     }

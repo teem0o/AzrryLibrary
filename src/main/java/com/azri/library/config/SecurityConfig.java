@@ -1,8 +1,8 @@
 package com.azri.library.config;
 
 
-import com.azri.library.security.Role;
 import com.azri.library.security.JwtAuthenticationFilter;
+import com.azri.library.security.Role;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,25 +13,19 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import static com.azri.library.security.Permission.ADMIN_READ;
-import static com.azri.library.security.Permission.USER_READ;
-import static org.springframework.http.HttpMethod.GET;
+import static org.springframework.http.HttpMethod.*;
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
 
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
-//@EnableMethodSecurity
 public class SecurityConfig {
-    private static final String[] WHITE_LIST_URL = { //TODO FILl
+    private static final String[] WHITE_LIST_URL = {
             "/api/v1/auth/**",
-//            "/auth/signin/**",
-//            "/auth/test1*",
-//            "/auth/test1/**"
-//            "/h2-ui/**",
-//            String.valueOf(PathRequest.toH2Console())
-};
+    };
+    public static final String API_V_1_BOOK = "/api/v1/book/**";
+    public static final String API_V_1_USER = "/api/v1/user/**";
 
 
     private final JwtAuthenticationFilter jwtAuthFilter;
@@ -43,9 +37,20 @@ public class SecurityConfig {
         return http.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(req ->
                         req.requestMatchers(WHITE_LIST_URL).permitAll()
-                                .requestMatchers("/api/v1/book/**").hasAnyRole(Role.ADMIN.name(),Role.USER.name())
-                                .requestMatchers(GET,"/api/v1/book/**").hasAnyAuthority(ADMIN_READ.name(),USER_READ.name())
+                                .requestMatchers(GET, API_V_1_BOOK).hasAnyRole(Role.ADMIN.name(), Role.USER.name())
+                                .requestMatchers(PATCH, API_V_1_BOOK).hasAnyRole(Role.ADMIN.name(), Role.USER.name())
+                                .requestMatchers(POST, API_V_1_BOOK).hasAnyRole(Role.ADMIN.name())
+                                .requestMatchers(PUT, API_V_1_BOOK).hasAnyRole(Role.ADMIN.name())
+                                .requestMatchers(DELETE, API_V_1_BOOK).hasAnyRole(Role.ADMIN.name())
+
+                                .requestMatchers(GET, API_V_1_USER).hasAnyRole(Role.ADMIN.name())
+                                .requestMatchers(PATCH, API_V_1_USER).hasAnyRole(Role.ADMIN.name())
+                                .requestMatchers(POST, API_V_1_USER).hasAnyRole(Role.ADMIN.name())
+                                .requestMatchers(PUT, API_V_1_USER).hasAnyRole(Role.ADMIN.name())
+                                .requestMatchers(DELETE, API_V_1_USER).hasAnyRole(Role.ADMIN.name())
                                 .anyRequest().authenticated()
+
+
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(STATELESS))
                 .authenticationProvider(authenticationProvider)

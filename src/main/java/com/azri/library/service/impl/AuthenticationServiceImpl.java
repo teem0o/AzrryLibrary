@@ -1,7 +1,7 @@
 package com.azri.library.service.impl;
 
 import com.azri.library.exception.UsernameAlreadyExistsException;
-import com.azri.library.security.AuthenticationResponse;
+import com.azri.library.dto.AuthenticationResponse;
 
 import com.azri.library.dto.RegisterRequest;
 import com.azri.library.dto.AuthenticateRequest;
@@ -49,5 +49,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .token(jwt)
                 .build();
     }
+
 
 }

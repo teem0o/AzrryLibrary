@@ -2,7 +2,7 @@ package com.azri.library.controller;
 
 import com.azri.library.dto.AuthenticateRequest;
 import com.azri.library.dto.RegisterRequest;
-import com.azri.library.security.AuthenticationResponse;
+import com.azri.library.dto.AuthenticationResponse;
 import com.azri.library.service.AuthenticationService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +19,7 @@ public class AuthenticationController {
     private final AuthenticationService authenticationService;
 
     @PostMapping("/register")
-    public ResponseEntity<?> signup(@Valid @RequestBody RegisterRequest registerRequest) {
+    public ResponseEntity<AuthenticationResponse> signup(@Valid @RequestBody RegisterRequest registerRequest) {
             return ResponseEntity.ok(authenticationService.signup(registerRequest));
 
     }

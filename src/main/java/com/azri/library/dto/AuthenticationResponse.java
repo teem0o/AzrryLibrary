@@ -1,4 +1,4 @@
-package com.azri.library.security;
+package com.azri.library.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

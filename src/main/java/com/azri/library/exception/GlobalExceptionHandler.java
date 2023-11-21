@@ -23,6 +23,7 @@ public class GlobalExceptionHandler {
                 .stream().map(FieldError::getDefaultMessage).toList();
         return new ResponseEntity<>(getErrorsMap(errors), new HttpHeaders(), HttpStatus.BAD_REQUEST);
     }
+
     @ExceptionHandler(Exception.class)
     public final ResponseEntity<Map<String, List<String>>> handleGeneralExceptions(Exception ex) {
         List<String> errors = Collections.singletonList(ex.getMessage());

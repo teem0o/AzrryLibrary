@@ -14,7 +14,6 @@ import static com.azri.library.security.Permission.*;
 @RequiredArgsConstructor
 public enum Role {
 
-//    USER(Collections.emptySet()),
     ADMIN(
             Set.of(
                     ADMIN_READ,
