@@ -1,15 +1,14 @@
 package com.azri.library.service.impl;
 
-import com.azri.library.exception.UsernameAlreadyExistsException;
-import com.azri.library.dto.AuthenticationResponse;
-
-import com.azri.library.dto.RegisterRequest;
 import com.azri.library.dto.AuthenticateRequest;
+import com.azri.library.dto.AuthenticationResponse;
+import com.azri.library.dto.RegisterRequest;
 import com.azri.library.entity.User;
+import com.azri.library.exception.UsernameAlreadyExistsException;
 import com.azri.library.repository.UserRepository;
+import com.azri.library.security.JWTService;
 import com.azri.library.security.Role;
 import com.azri.library.service.AuthenticationService;
-import com.azri.library.security.JWTService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -40,8 +39,11 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     public AuthenticationResponse signin(AuthenticateRequest authenticateRequest) {
-        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authenticateRequest.getUsername(), authenticateRequest.getPassword()));
-        var user = userRepository.findByUsername(authenticateRequest.getUsername()).orElseThrow(() -> new RuntimeException("User not found"));
+        authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(authenticateRequest.getUsername(),
+                        authenticateRequest.getPassword()));
+        var user = userRepository.findByUsername(authenticateRequest.getUsername())
+                .orElseThrow(() -> new RuntimeException("User not found"));
         var jwt = jwtService.generateToken(user);
 
 

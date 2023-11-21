@@ -1,6 +1,5 @@
 package com.azri.library.dto;
 
-import com.azri.library.security.Role;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;

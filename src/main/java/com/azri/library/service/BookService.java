@@ -8,11 +8,16 @@ import org.springframework.data.domain.Pageable;
 
 public interface BookService {
     Page<BookResponse> getAllBooks(String title, String author, String isbn, Pageable pageable);
+
     public BookResponse getBookById(Long id);
+
     BookResponse createBook(BookRequest bookRequest);
+
     BookResponse updateBook(BookRequest bookRequest);
+
     void deleteBook(Long id);
 
     BookResponse borrowBook(HttpServletRequest request, Long bookId);
+
     BookResponse returnBook(HttpServletRequest request, Long id);
 }

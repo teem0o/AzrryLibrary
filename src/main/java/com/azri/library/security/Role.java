@@ -33,9 +33,7 @@ public enum Role {
                     USER_DELETE,
                     USER_CREATE
             )
-    )
-
-    ;
+    );
 
     @Getter
     private final Set<Permission> permissions;

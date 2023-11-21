@@ -3,6 +3,7 @@ package com.azri.library.service.impl;
 import com.azri.library.dto.UserRequest;
 import com.azri.library.dto.UserResponse;
 import com.azri.library.entity.User;
+import com.azri.library.exception.UserNotFoundException;
 import com.azri.library.exception.UsernameAlreadyExistsException;
 import com.azri.library.repository.UserRepository;
 import com.azri.library.service.UserService;
@@ -10,9 +11,9 @@ import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+
 @Service
 @AllArgsConstructor
 public class UserServiceImpl implements UserService {
@@ -23,12 +24,14 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserResponse getUserByUsername(String username) {
-        return userRepository.findByUsername(username).map(user -> modelMapper.map(user, UserResponse.class)).get(); //TODO doesnt exists exception
+        return userRepository.findByUsername(username).map(user -> modelMapper.map(user, UserResponse.class))
+                .orElseThrow(() -> new UserNotFoundException(username));
     }
 
     @Override
     public UserResponse getUserById(Long id) {
-        return userRepository.findById(id).map(user -> modelMapper.map(user, UserResponse.class)).get(); //TODO doesnt exists exception
+        return userRepository.findById(id).map(user -> modelMapper.map(user, UserResponse.class))
+                .orElseThrow(() -> new UserNotFoundException(id + ""));
     }
 
     @Override
@@ -50,13 +53,16 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserResponse updateUser(UserRequest userRequest) {
-        User user = modelMapper.map(userRequest, User.class);
+        userRepository.findById(userRequest.getId())
+                .orElseThrow(() -> new UserNotFoundException(userRequest.getId() + ""));
+        var user = modelMapper.map(userRequest, User.class);
         user.setPassword(passwordEncoder.encode(userRequest.getPassword()));
         return modelMapper.map(userRepository.save(user), UserResponse.class);
     }
 
     @Override
     public void deleteUser(Long id) {
+        userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(id + ""));
         userRepository.deleteById(id);
 
     }
