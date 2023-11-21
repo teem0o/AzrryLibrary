@@ -2,7 +2,7 @@
 ## Technologies
 * JDK 17
 * Spring Boot 3.1.5
-* Spring Security
+* Spring Security & JWT
 * Maven
 
 
