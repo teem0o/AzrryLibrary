@@ -5,6 +5,7 @@ import com.azri.library.dto.BookResponse;
 import com.azri.library.entity.Book;
 import com.azri.library.entity.Status;
 import com.azri.library.entity.User;
+import com.azri.library.exception.BookActivityProcessingException;
 import com.azri.library.exception.BookNotFoundException;
 import com.azri.library.jms.BookActivityMessage;
 import com.azri.library.jms.BookActivitySenderService;
@@ -106,7 +107,7 @@ public class BookServiceImpl implements BookService {
         try {
             jsonMessage = objectMapper.writeValueAsString(bookActivityMessage);
         } catch (JsonProcessingException e) {
-            throw new RuntimeException("error at serializing " + e);
+            throw new BookActivityProcessingException("error at serializing " + e);
         }
         bookActivitySenderService.sendBookActivity(jsonMessage);
     }

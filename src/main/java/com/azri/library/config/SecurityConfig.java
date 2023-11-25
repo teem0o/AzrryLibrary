@@ -26,6 +26,7 @@ public class SecurityConfig {
     };
     public static final String API_V_1_BOOK = "/api/v1/book/**";
     public static final String API_V_1_USER = "/api/v1/user/**";
+    public static final String API_V_1_BOOK_ACTIVITY_LOG = "/api/v1/book-activity-log";
 
 
     private final JwtAuthenticationFilter jwtAuthFilter;
@@ -48,6 +49,8 @@ public class SecurityConfig {
                                 .requestMatchers(POST, API_V_1_USER).hasAnyRole(Role.ADMIN.name())
                                 .requestMatchers(PUT, API_V_1_USER).hasAnyRole(Role.ADMIN.name())
                                 .requestMatchers(DELETE, API_V_1_USER).hasAnyRole(Role.ADMIN.name())
+
+                                .requestMatchers(API_V_1_BOOK_ACTIVITY_LOG).hasAnyRole(Role.ADMIN.name())
                                 .anyRequest().authenticated()
 
 
