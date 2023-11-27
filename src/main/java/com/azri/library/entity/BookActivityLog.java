@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Data
 @Builder
@@ -20,4 +22,5 @@ public class BookActivityLog {
     private Long userId;
     private Status status;
     private String message;
+    private LocalDateTime createdDate = LocalDateTime.now();
 }
